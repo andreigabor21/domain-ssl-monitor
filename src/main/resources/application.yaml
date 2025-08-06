@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/sslmonitor
     username: ${DB_USERNAME:sslmonitor}
-    password: ${DB_PASSWORD:password}
+    password: ${DB_PASSWORD:password123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
