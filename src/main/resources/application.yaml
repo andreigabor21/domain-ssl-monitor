@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: domain-ssl-monitor
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sslmonitor
+    username: ${DB_USERNAME:sslmonitor}
+    password: ${DB_PASSWORD:password123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+server:
+  port: 8080
+
+# SSL Check Configuration
+ssl:
+  check:
+    thresholds:
+      critical: 7
+      warning: 30
+      info: 90
+
+# Logging
+logging:
+  level:
+    com.media.sslmonitor: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+
+# API Documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
