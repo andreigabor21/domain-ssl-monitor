@@ -24,28 +24,28 @@ public class SSLCertificateServiceImpl implements SSLCertificateService {
         log.info("Checking SSL certificate for domain: {}", domain);
 
         try {
-            String cleanDomain = domain.replaceAll("^https?://", "").replaceAll("/.*$", "");
+            final String cleanDomain = domain.replaceAll("^https?://", "").replaceAll("/.*$", "");
 
-            URI uri = URI.create("https://" + cleanDomain);
-            HttpsURLConnection connection = (HttpsURLConnection) uri.toURL().openConnection();
+            final URI uri = URI.create("https://" + cleanDomain);
+            final HttpsURLConnection connection = (HttpsURLConnection) uri.toURL().openConnection();
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(10000);
             connection.connect();
 
-            Certificate[] certificates = connection.getServerCertificates();
-            X509Certificate cert = (X509Certificate) certificates[0];
+            final Certificate[] certificates = connection.getServerCertificates();
+            final X509Certificate cert = (X509Certificate) certificates[0];
 
-            LocalDateTime expiryDate = LocalDateTime.ofInstant(
+            final LocalDateTime expiryDate = LocalDateTime.ofInstant(
                     cert.getNotAfter().toInstant(),
                     ZoneId.systemDefault()
             );
 
-            long daysUntilExpiry = ChronoUnit.DAYS.between(
+            final long daysUntilExpiry = ChronoUnit.DAYS.between(
                     LocalDateTime.now(),
                     expiryDate
             );
 
-            CertificateInfo info = CertificateInfo.builder()
+            final CertificateInfo info = CertificateInfo.builder()
                     .domain(cleanDomain)
                     .isValid(true)
                     .expiryDate(expiryDate)
@@ -79,7 +79,7 @@ public class SSLCertificateServiceImpl implements SSLCertificateService {
         log.info("Starting async SSL check for domain: {} on thread: {}",
                 domain, Thread.currentThread().getName());
 
-        CertificateInfo result = checkCertificate(domain);
+        final CertificateInfo result = checkCertificate(domain);
         return CompletableFuture.completedFuture(result);
     }
 }

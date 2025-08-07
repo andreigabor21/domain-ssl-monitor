@@ -28,3 +28,8 @@ variable "db_password" {
   default     = "password123"
   sensitive   = true
 }
+
+variable "notification_email" {
+  description = "Email address for SSL certificate notifications"
+  type        = string
+}

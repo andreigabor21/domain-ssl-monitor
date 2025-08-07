@@ -61,7 +61,7 @@ public class CertificateCheck {
 
     @Transient
     public String getAlertLevel() {
-        Integer days = getDaysUntilExpiry();
+        final Integer days = getDaysUntilExpiry();
         if (days == null) return "ERROR";
         if (days <= 7) return "CRITICAL";
         if (days <= 30) return "WARNING";

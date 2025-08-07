@@ -35,12 +35,12 @@ public class DomainServiceImpl implements DomainService {
     @Override
     public List<DomainCheckResponse> checkDomains(DomainCheckRequest request) {
         log.info("Starting synchronous check for {} domains", request.getDomains().size());
-        long startTime = System.currentTimeMillis();
+        final long startTime = System.currentTimeMillis();
 
-        List<DomainCheckResponse> collect = request.getDomains().stream()
+        final List<DomainCheckResponse> collect = request.getDomains().stream()
                 .map(this::checkSingleDomain)
                 .collect(Collectors.toList());
-        long duration = System.currentTimeMillis() - startTime;
+        final long duration = System.currentTimeMillis() - startTime;
         log.info("Synchronous check completed for {} domains in {} ms",
                 request.getDomains().size(), duration);
         return collect;
@@ -49,9 +49,9 @@ public class DomainServiceImpl implements DomainService {
     @Override
     public CompletableFuture<List<DomainCheckResponse>> checkDomainsAsync(DomainCheckRequest request) {
         log.info("Starting asynchronous check for {} domains", request.getDomains().size());
-        long startTime = System.currentTimeMillis();
+        final long startTime = System.currentTimeMillis();
 
-        List<CompletableFuture<DomainCheckResponse>> futures = request.getDomains().stream()
+        final List<CompletableFuture<DomainCheckResponse>> futures = request.getDomains().stream()
                 .map(domain -> sslCertificateService.checkCertificateAsync(domain)
                         .thenApply(this::saveCertificateCheck))
                 .toList();
@@ -71,19 +71,19 @@ public class DomainServiceImpl implements DomainService {
     }
 
     private DomainCheckResponse checkSingleDomain(String domainName) {
-        CertificateInfo certInfo = sslCertificateService.checkCertificate(domainName);
+        final CertificateInfo certInfo = sslCertificateService.checkCertificate(domainName);
         return saveCertificateCheck(certInfo);
     }
 
     private DomainCheckResponse saveCertificateCheck(CertificateInfo certInfo) {
-        Domain domain = domainRepository.findByDomainName(certInfo.getDomain())
+        final Domain domain = domainRepository.findByDomainName(certInfo.getDomain())
                 .orElseGet(() -> {
                     Domain newDomain = new Domain();
                     newDomain.setDomainName(certInfo.getDomain());
                     return domainRepository.save(newDomain);
                 });
 
-        CertificateCheck check = new CertificateCheck();
+        final CertificateCheck check = new CertificateCheck();
         check.setDomain(domain);
         check.setValid(certInfo.isValid());
         check.setExpiryDate(certInfo.getExpiryDate());
@@ -97,11 +97,10 @@ public class DomainServiceImpl implements DomainService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<DomainCheckResponse> getDomainsExpiringSoon(int days) {
         log.info("Finding domains expiring within {} days", days);
 
-        LocalDateTime expiryThreshold = LocalDateTime.now().plusDays(days);
+        final LocalDateTime expiryThreshold = LocalDateTime.now().plusDays(days);
 
         return certificateCheckRepository.findLatestChecksExpiringBefore(expiryThreshold).stream()
                 .map(check -> DomainCheckResponse.builder()
@@ -116,9 +115,8 @@ public class DomainServiceImpl implements DomainService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<CertificateCheck> getDomainHistory(String domainName, Pageable pageable) {
-        Domain domain = domainRepository.findByDomainName(domainName)
+        final Domain domain = domainRepository.findByDomainName(domainName)
                 .orElseThrow(() -> new DomainNotFoundException("Domain not found: " + domainName));
 
         return certificateCheckRepository.findByDomainOrderByCheckTimeDesc(domain, pageable);

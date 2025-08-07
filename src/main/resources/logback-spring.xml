@@ -11,7 +11,7 @@
         </encoder>
     </appender>
 
-    <!-- JSON Appender for Production (Structured Logging) -->
+    <!-- JSON Appender for Production -->
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampPattern>
@@ -20,7 +20,6 @@
         </encoder>
     </appender>
 
-    <!-- Use JSON logging in production, console in development -->
     <springProfile name="!prod">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
@@ -33,6 +32,5 @@
         </root>
     </springProfile>
 
-    <!-- Application specific logging -->
     <logger name="com.media.sslmonitor" level="DEBUG"/>
 </configuration>

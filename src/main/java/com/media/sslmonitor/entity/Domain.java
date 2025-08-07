@@ -34,7 +34,7 @@ public class Domain {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
     }
